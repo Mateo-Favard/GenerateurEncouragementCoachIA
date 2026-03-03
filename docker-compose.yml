@@ -1,0 +1,31 @@
+services:
+  audiocoach:
+    build:
+      context: .
+      target: runtime
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models:ro
+    environment:
+      - COACH_LLM_MODEL_PATH=models/llm/Qwen3-4B-Q4_K_M.gguf
+      - COACH_TTS_MODEL_PATH=models/tts/fr_FR-siwis-medium.onnx
+      - COACH_LOG_LEVEL=info
+      - COACH_MAX_WORKERS=4
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  test:
+    build:
+      context: .
+      target: test
+    profiles:
+      - test

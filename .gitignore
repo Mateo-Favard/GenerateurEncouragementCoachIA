@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+
+# Environment / Credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+credentials.json
+service-account.json
+secrets.yaml
+secrets.yml
+
+# Models (downloaded separately, too large for git)
+models/llm/
+models/tts/
+*.gguf
+*.onnx
+*.bin
+
+# Audio output
+*.wav
+*.mp3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Docker
+*.log
+
+# Temp
+tmp/
