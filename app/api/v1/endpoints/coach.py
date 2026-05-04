@@ -32,7 +32,6 @@ def _cleanup_file(path: Path) -> None:
 
 @router.post(
     "/coach",
-    response_class=FileResponse,
     responses={
         200: {"content": {"audio/wav": {}}, "description": "Audio WAV du coaching"},
         422: {"description": "Validation error"},
@@ -88,8 +87,9 @@ async def generate_coaching(
 
     background_tasks.add_task(_cleanup_file, output_path)
 
+    safe_theme = request.theme.replace(" ", "_")
     return FileResponse(
         path=str(output_path),
         media_type="audio/wav",
-        filename=f"coaching_{request.theme}_{request_id}.wav",
+        filename=f"coaching_{safe_theme}_{request_id}.wav",
     )

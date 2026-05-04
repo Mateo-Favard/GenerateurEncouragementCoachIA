@@ -1,19 +1,5 @@
-# === Builder: llama-cpp-python (long compilation, cached separately) ===
-FROM python:3.12-slim AS builder-llm
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-ARG LLAMA_CPP_VERSION=0.3.16
-RUN pip install --no-cache-dir --prefix=/install llama-cpp-python==${LLAMA_CPP_VERSION}
-
-# === Builder: other Python deps ===
+# === Builder: Python deps ===
 FROM python:3.12-slim AS builder-deps
-
-COPY --from=builder-llm /install /usr/local
 
 WORKDIR /build
 COPY requirements.txt .
@@ -40,7 +26,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder-llm /install /usr/local
 COPY --from=builder-deps /install /usr/local
 COPY --from=piper-dl /opt/piper /opt/piper
 ENV PATH="/opt/piper:${PATH}"

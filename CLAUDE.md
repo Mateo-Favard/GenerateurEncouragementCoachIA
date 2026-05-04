@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-AudioCoach KeepFit - FastAPI API that generates French audio coaching for sport exercises. User sends exercises + a theme (pirate, chevalier...), Qwen3-4B generates motivational text, Piper synthesizes it to WAV audio.
+AudioCoach KeepFit - FastAPI API that generates French audio coaching for sport exercises. User sends exercises + a theme (pirate, chevalier...), Qwen3.5-0.8B generates motivational text, Piper synthesizes it to WAV audio.
 
 ## Commands
 
 Everything runs in Docker. Never use local Python.
 
 ```bash
-make download-models   # Download LLM (~2.5GB) + TTS (~60MB) from HuggingFace
+make download-models   # Download LLM (~812MB) + TTS (~60MB) from HuggingFace
 make up                # docker compose up --build (starts API on :8000)
 make down              # Stop containers
 make test              # Run pytest in Docker (uses mock providers, no models needed)
@@ -28,7 +28,7 @@ Swagger UI: http://localhost:8000/docs
 ```
 POST /api/v1/coach {exercises, theme}
   → LangGraph graph (2 nodes):
-    [generate_text] → Qwen3-4B via llama-cpp-python → coaching text
+    [generate_text] → Qwen3.5-0.8B via llama-cpp-python → coaching text
     [synthesize_audio] → Piper CLI subprocess → WAV file
   → FileResponse (download) → BackgroundTasks cleanup temp file
 ```
@@ -39,7 +39,7 @@ POST /api/v1/coach {exercises, theme}
 
 ### Concurrency model
 
-LLM and TTS are synchronous CPU-bound calls. They run via `asyncio.run_in_executor(ThreadPoolExecutor)` to avoid blocking the event loop. Single Uvicorn worker (LLM uses ~2.5GB RAM).
+LLM and TTS are synchronous CPU-bound calls. They run via `asyncio.run_in_executor(ThreadPoolExecutor)` to avoid blocking the event loop. Single Uvicorn worker (LLM uses ~812MB RAM).
 
 ### Lifespan
 

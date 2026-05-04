@@ -6,11 +6,10 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     model_config = {"env_prefix": "COACH_"}
 
-    # LLM
-    llm_model_path: str = "models/llm/Qwen3-4B-Q4_K_M.gguf"
-    llm_n_ctx: int = 4096
-    llm_n_threads: int = 4
-    llm_max_tokens: int = 2048
+    # LLM (OpenRouter)
+    openrouter_api_key: str
+    openrouter_model: str = "minimax/minimax-m2.5"
+    llm_max_tokens: int = 512
     llm_temperature: float = 0.7
 
     # TTS

@@ -7,7 +7,7 @@ from app.api.v1.router import router as api_router
 from app.core.config import settings
 from app.core.exceptions import CoachError, coach_error_handler
 from app.core.logging import setup_logging
-from app.services.llm.llamacpp_provider import LlamaCppProvider
+from app.services.llm.openrouter_provider import OpenRouterProvider
 from app.services.tts.piper_provider import PiperProvider
 
 setup_logging()
@@ -16,13 +16,11 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: load models
     logger.info("Starting AudioCoach KeepFit...")
 
-    llm = LlamaCppProvider(
-        model_path=settings.llm_model_path,
-        n_ctx=settings.llm_n_ctx,
-        n_threads=settings.llm_n_threads,
+    llm = OpenRouterProvider(
+        api_key=settings.openrouter_api_key,
+        model=settings.openrouter_model,
         temperature=settings.llm_temperature,
     )
     tts = PiperProvider(
@@ -39,11 +37,10 @@ async def lifespan(app: FastAPI):
     app.state.tts_provider = tts
     app.state.tts_loaded = True
 
-    logger.info("All models loaded, ready to serve")
+    logger.info("All providers loaded, ready to serve")
 
     yield
 
-    # Shutdown: unload models
     logger.info("Shutting down AudioCoach KeepFit...")
     llm.unload()
     tts.unload()
